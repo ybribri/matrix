@@ -4,8 +4,6 @@
 * all the prototype functions for two dimension arrays, from functions for iteration to generators.
 * some added functions only for this class.
 
-* details [demo and detailed documentation](https://ybrians.cafe24.com/matrix/)
-
 ### How to use
 ```
 In a HTML file,
@@ -118,4 +116,4 @@ entries()
     [2,1] = 3
     [2,2] = 4
 ```
-* for more details of each functions, visit [demo and detailed documentation](https://ybrians.cafe24.com/matrix/)
+* for more details of each functions, visit [here](https://ybrians.cafe24.com/matrix/)
