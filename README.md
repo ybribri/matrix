@@ -7,7 +7,7 @@
 ### How to use
 ```
 In a HTML file,
-&lt;script src="./matrix-js-link.min.js"&gt;&lt;/script&gt;
+<script src="./matrix-js-link.min.js"></script>
 
 OR
 
