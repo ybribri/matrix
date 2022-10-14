@@ -498,7 +498,7 @@ module.exports = class Matrix {
         return this.#matrix.toString();
     }
 
-    copyWithin(target=[0,0], start=[0,0], end=[this.row-1, this.#matrix[this.row].length]) {
+    copyWithin(target=[0,0], start=[0,0], end=[this.row-1, this.#matrix[this.row-1].length]) {
         target = this.#reIndex(target);
         if (target[0]>this.row-1) return this;
         start = this.#reIndex(start);
