@@ -6,13 +6,17 @@
 
 ### How to use
 ```
-In a HTML file,
+<node.js>
+$ npm i matrix_yun
+
+const Matrix = require('./matrix-js-node');
+
+<HTML file>
 <script src="./matrix-js-link.min.js"></script>
 
-OR
-
-In a javascript module,
+<Javascript module>
 import { Matrix } from './matrix-js-module.min.js';
+
 ```
 
 * DECLARE
@@ -91,8 +95,10 @@ values()
 entries()
 ```
 > ** All the prototype functions are rebuilt for this class.
-> ** In most cases, an index in callback function is seperated to a row index and colum index **
-> ** a few prototype functions are added compared to Array class.
+
+> ** In most cases, an index in callback function is seperated into a row index and colum index
+
+> ** a few prototype functions are added only for matrix class.
 
 ### EXAMPLE
 ```
