@@ -1,13 +1,13 @@
 # Matrix - class for two dimension array 
 
-* easier manipulation
-* all the prototype functions for two dimension arrays, from functions for iteration to generators.
-* some added functions only for this class.
+* Easy as original Javascript prototype functions
+* All the same prototype functions of array for two dimensional arrays width adjusted arguments for 2D arrays.
+* Added functions only for this class
 
 ### How to use
 ```
 <node.js>
-$ npm i matrix_yun
+$ npm i class-matrix
 
 const Matrix = require('./matrix-js-node');
 
@@ -122,4 +122,4 @@ entries()
     [2,1] = 3
     [2,2] = 4
 ```
-* for more details of each functions, visit [here](https://ybrians.cafe24.com/matrix/)
+* [for more details of each functions](https://ybrians.cafe24.com/matrix/)

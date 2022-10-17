@@ -61,7 +61,7 @@ module.exports = class Matrix {
         return newMatrix;        
     }
 
-    reverse(dir='col') {
+    reverse(dir='colrow') {
         if (dir.includes('col')) this.#matrix = this.#matrix.map((u, i) => u.map((v,j) => u[u.length-1-j]));
         if (dir.includes('row')) this.#matrix = this.#matrix.map((u, i)=>this.#matrix[this.#matrix.length-1-i]);
         let newMatrix = new Matrix(this.#matrix.length, this.#matrix[0].length);
@@ -69,11 +69,7 @@ module.exports = class Matrix {
         return newMatrix;
     }
 
-    sort(fn=(x,y)=>((x<y)?-1:(x>y)?1:0), dir='col') {
-        if (typeof fn !== 'function') {
-            dir=fn;
-            fn=(x,y)=>((x<y)?-1:(x>y)?1:0);
-        }
+    sort(fn, dir='row') {
         if (dir!=='col' && dir!=='row') return this.#matrix;
         if (dir=='col') this.#matrix = this.#matrix.map((u, i) => u.sort(fn));
         if (dir=='row') {

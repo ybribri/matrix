@@ -61,7 +61,7 @@ export class Matrix {
         return newMatrix;        
     }
 
-    reverse(dir='col') {
+    reverse(dir='colrow') {
         if (dir.includes('col')) this.#matrix = this.#matrix.map((u, i) => u.map((v,j) => u[u.length-1-j]));
         if (dir.includes('row')) this.#matrix = this.#matrix.map((u, i)=>this.#matrix[this.#matrix.length-1-i]);
         let newMatrix = new Matrix(this.#matrix.length, this.#matrix[0].length);

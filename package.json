@@ -1,0 +1,16 @@
+{
+  "name": "class-matrix",
+  "version": "1.0.4",
+  "description": "matrix, class for two dimension arrays",
+  "keywords": ["2d", "array", "math", "matrix", "two dimension", "two dimensional", "class", "prototype"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ybribri/matrix.git"
+  },
+  "author": "Cheolhwan Yun <ybrian74@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ybribri/matrix/issues"
+  },
+  "homepage": "https://ybrians.cafe24.com/matrix"
+}
