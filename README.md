@@ -1,21 +1,23 @@
 # Matrix - class for two dimension array 
 
 * Easy as original Javascript prototype functions
-* All the same prototype functions of array for two dimensional arrays width adjusted arguments for 2D arrays.
+* All the same prototype functions of array for two dimensional arrays with adjusted arguments for 2D arrays.
 * Added functions only for this class
 
 ### How to use
 ```
-<node.js>
-$ npm i class-matrix
+[node.js]
+$ npm i class-matrix   // to install
 
-const Matrix = require('./matrix-js-node');
+const Matrix = require('class-matrix'); // commonJS
+// or
+import Matrix from 'class-matrix'; // ESM
 
-<HTML file>
-<script src="./matrix-js-link.min.js"></script>
+[browser]
 
-<Javascript module>
-import { Matrix } from './matrix-js-module.min.js';
+<script src="./matrix-js-link.min.js"></script> // in <head> tag
+// or
+import { Matrix } from './matrix-js-module.min.js'; // in Javascript module
 
 ```
 
@@ -96,7 +98,7 @@ entries()
 ```
 > ** All the prototype functions are rebuilt for this class.
 
-> ** In most cases, an index in callback function is seperated into a row index and colum index
+> ** In most cases, an index in callback function is seperated into a row index and a column index
 
 > ** a few prototype functions are added only for matrix class.
 

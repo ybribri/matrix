@@ -1,6 +1,13 @@
 {
   "name": "class-matrix",
-  "version": "1.0.4",
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "require": "./matrix-js-node.js",
+      "import": "./matrix-js-node-esm.mjs"
+    }
+  },
+  "version": "1.0.9",
   "description": "matrix, class for two dimension arrays",
   "keywords": ["2d", "array", "math", "matrix", "two dimension", "two dimensional", "class", "prototype"],
   "repository": {

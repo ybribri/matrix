@@ -69,11 +69,7 @@ export class Matrix {
         return newMatrix;
     }
 
-    sort(fn=(x,y)=>((x<y)?-1:(x>y)?1:0), dir='col') {
-        if (typeof fn !== 'function') {
-            dir=fn;
-            fn=(x,y)=>((x<y)?-1:(x>y)?1:0);
-        }
+    sort(fn, dir='row') {
         if (dir!=='col' && dir!=='row') return this.#matrix;
         if (dir=='col') this.#matrix = this.#matrix.map((u, i) => u.sort(fn));
         if (dir=='row') {
