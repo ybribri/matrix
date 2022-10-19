@@ -9,7 +9,7 @@ class Matrix {
         this.#matrix = Array.from({length: this.row}, () => Array.from({ length: this.column}, () => null));
     }
 
-    get value () {
+    get value () { 
         return this.#matrix;
     }
 
