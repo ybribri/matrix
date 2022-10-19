@@ -1,5 +1,6 @@
 #js only for node
 matrix-js-node-esm.mjs
-matrix-js.node.js
+matrix-js-node.js
+matrix-js-node.min.js
 test.js
 /node_modules
