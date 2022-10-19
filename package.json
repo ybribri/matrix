@@ -9,7 +9,16 @@
   },
   "version": "1.0.9",
   "description": "matrix, class for two dimension arrays",
-  "keywords": ["2d", "array", "math", "matrix", "two dimension", "two dimensional", "class", "prototype"],
+  "keywords": [
+    "2d",
+    "array",
+    "math",
+    "matrix",
+    "two dimension",
+    "two dimensional",
+    "class",
+    "prototype"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ybribri/matrix.git"
@@ -19,5 +28,12 @@
   "bugs": {
     "url": "https://github.com/ybribri/matrix/issues"
   },
-  "homepage": "https://ybrians.cafe24.com/matrix"
+  "homepage": "https://ybrians.cafe24.com/matrix",
+  "devDependencies": {
+    "eslint": "^8.25.0",
+    "jest": "^29.2.1"
+  },
+  "scripts": {
+    "test": "node test.js"
+  }
 }

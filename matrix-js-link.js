@@ -1,11 +1,12 @@
 class Matrix {
+    "use strict"
     #matrix;
 
     constructor(x, y) {
         if (x==undefined || y==undefined) return undefined;
         this.row = x;
         this.column = y;
-        this.#matrix = Array.from({length: this.row}, row => Array.from({ length: this.column}, col => null));
+        this.#matrix = Array.from({length: this.row}, () => Array.from({ length: this.column}, () => null));
     }
 
     get value () {
@@ -17,9 +18,7 @@ class Matrix {
             this.#matrix = v;
             this.row = this.#matrix.length;
             this.column = this.#matrix[0].length;
-            return true;
         }
-        return false;
     }
     
     getValueOf(at=[0,0]) {
@@ -39,7 +38,6 @@ class Matrix {
             return undefined;
         }
         this.#matrix[f][s] = v;
-        return v;
     }
 
     static isMatrix(matrix) {
@@ -62,7 +60,7 @@ class Matrix {
     }
 
     reverse(dir='colrow') {
-        if (dir.includes('col')) this.#matrix = this.#matrix.map((u, i) => u.map((v,j) => u[u.length-1-j]));
+        if (dir.includes('col')) this.#matrix = this.#matrix.map(u => u.map((v,j) => u[u.length-1-j]));
         if (dir.includes('row')) this.#matrix = this.#matrix.map((u, i)=>this.#matrix[this.#matrix.length-1-i]);
         let newMatrix = new Matrix(this.#matrix.length, this.#matrix[0].length);
         newMatrix.value = this.#matrix;
@@ -71,7 +69,7 @@ class Matrix {
 
     sort(fn, dir='row') {
         if (dir!=='col' && dir!=='row') return this.#matrix;
-        if (dir=='col') this.#matrix = this.#matrix.map((u, i) => u.sort(fn));
+        if (dir=='col') this.#matrix = this.#matrix.map(u => u.sort(fn));
         if (dir=='row') {
             let temp = this.#matrix.flat();
             temp = temp.sort(fn);
@@ -86,7 +84,9 @@ class Matrix {
             });
             this.#matrix = tempArr;
         }
-        return this;
+        let newMatrix = new Matrix(this.#matrix.length, this.#matrix[0].length);
+        newMatrix.value = this.#matrix;
+        return newMatrix;
     }
 
     map(fn, arg) {
@@ -225,12 +225,13 @@ class Matrix {
     concat() {
         let res = JSON.parse(JSON.stringify(this.#matrix));
         let dir = arguments[arguments.length-1];
-
+        let min = res[0].length;
+        let cnt = 0;
+        
         switch (dir) {
             case "col":
                 if (arguments.length==1) break;
-                let min = res[0].length;
-                let cnt = 0;
+
                 res.forEach((row, i)=>{ 
                     if (min>row.length) {
                         min = row.length;
@@ -501,7 +502,7 @@ class Matrix {
         let fTarget = this.row==1 ? target[1] : target[0] * this.column + target[1];
         let fStart = this.row==1 ? start[1] : start[0] * this.column + start[1];
         let fEnd = this.row==1 ? end[1] : end[0] * this.column + end[1];
-        let temp = this.#matrix.flat().copyWithin(fTarget, fStart, fEnd);
+        let temp = this.#matrix.flat(3).copyWithin(fTarget, fStart, fEnd);
         let tempArr= [];
         if (temp.length>0) { 
             let r = [];
