@@ -1,43 +1,58 @@
-# Matrix - class for two dimension array 
-
+# Matrix - class for two dimension array
 * Easy as original Javascript prototype functions
-* All the same prototype functions of array for two dimensional arrays with adjusted arguments for 2D arrays.
+* All the same prototype functions of array for two dimensional arrays with adjusted arguments
 * Added functions only for this class
+<hr style="height: 2px;">
 
-### How to use
-```
-[node.js]
-$ npm i class-matrix   // to install
+### < Install >
+needed only for node.js
 
-const Matrix = require('class-matrix'); // commonJS
-// or
-import Matrix from 'class-matrix'; // ESM
-
-[browser]
-
-<script src="./matrix-js-link.min.js"></script> // in <head> tag
-// or
-import { Matrix } from './matrix-js-module.min.js'; // in Javascript module
-
+```bash
+$ npm i class-matrix    
 ```
 
-* DECLARE
+### < Use - node.js >
+* *common JS*
+```javascript
+const Matrix = require('class-matrix');
+````
 
+* *ESM*
+```javascript
+import Matrix from 'class-matrix';
+```
+<hr style="height: 2px;">
+
+### < Use - browser >
+
+* *Link in \<head\> tag*
+```html
+<script src="./matrix-js-link.min.js"></script>
 ```
 
-let myMatrix = new Matrix(5,5);
+* *import in a module file*
+  
+```javascript
+import { Matrix } from './matrix-js-module.min.js';
+```
+<hr style="height: 2px;">
 
-```
-### INIT & VALUE
-```
+## < Methods >
+
+* **INIT & VALUE**
+
+```javascript
 new Matrix
+.row
+.column
 getter value
 setter value
 getValueOf()
-setValueOf()
+setValueOf()   
 ```
-### CHECK & FIND
-```
+* **CHECK & FIND**
+
+```javascript
 Matrix.isMatrix()
 at()
 find()
@@ -48,16 +63,18 @@ indexOf()
 lastIndexOf()
 includes()
 ```
-### NEW STRUCTURE
-```
+* **NEW STRUCTURE**
+
+```javascript
 concat()
 flat()
 join()
 toString()
 slice()
 ```
-### ITERATE
-```
+* **ITERATE**
+
+```javascript
 forEach()
 map()
 reduce()
@@ -66,8 +83,9 @@ filter()
 every()
 some()
 ```
-### CHANGE IN PLACE
-```
+* **CHANGE IN PLACE**
+
+```javascript
 fill()
 pop()
 push()
@@ -78,8 +96,9 @@ sort()
 reverse()
 copyWithin()
 ```
-### CHANGE IN PLACE
-```
+* **CHANGE IN PLACE**
+
+```javascript
 fill()
 pop()
 push()
@@ -90,38 +109,81 @@ sort()
 reverse()
 copyWithin()
 ```
-### GENERATOR
-```
+* **GENERATOR**
+
+```javascript
 keys()
 values()
 entries()
 ```
-> ** All the prototype functions are rebuilt for this class.
 
-> ** In most cases, an index in callback function is seperated into a row index and a column index
+> **All the prototype functions are rebuilt for this class**
+> **In most cases, an index in callback function is seperated into a row index and a column index**
+> **Some prototype functions are added only for matrix class**
 
-> ** a few prototype functions are added only for matrix class.
+<hr style="height: 2px;">
 
-### EXAMPLE
+## < EXAMPLE >
+
+```javascript
+let matrixA = new Matrix(3,3).fill((el,[i,j])=>i+j);
 ```
-    let matrixA = new Matrix(3,3).fill((el,[i,j])=>i+j);
 
-    0   1   2
-    1   2   3
-    2   3   4
+| 0 | 1 | 2 |
+|---|---|---|
+| **1** | **2** | **3** |
+| **2** | **3** | **4** |
 
-    matrixA.forEach((el, [i,j])=>{
-        console.log(`[${i},${j}] = ${el}`);
-    });
 
-    [0,0] = 0
-    [0,1] = 1
-    [0,2] = 2
-    [1,0] = 1
-    [1,1] = 2
-    [1,2] = 3
-    [2,0] = 2
-    [2,1] = 3
-    [2,2] = 4
+```javascript
+console.log(matrixA.getValueOf([2,2]));
 ```
+
+4
+<br>
+
+```javascript
+matrixA.setValueOf([2,2],9);
+console.log(matrixA.value);
+```
+
+| 0 | 1 | 2 |
+|---|---|---|
+| **1** | **2** | **3** |
+| **2** | **3** | **9** |
+
+<br>
+
+```javascript
+matrixA.value = [[0,1],[2,3],[4,5]];
+console.log(matrixA.value);
+console.log(`row = ${matrixA.row}, column = ${matrixA.column}`);
+
+// if you set value directly, it would change the structure of the matrix
+```
+
+| 0 | 1 |
+|---|---|
+| **2** | **3** |
+| **4** | **5** |
+
+row = 2, column = 2
+<br>
+
+```javascript
+matrixA.forEach((el, [i,j])=>{
+    console.log(`[${i},${j}] = ${el}`);
+});
+```
+
+[0,0] = 0
+[0,1] = 1
+[0,2] = 2
+[1,0] = 1
+[1,1] = 2
+[1,2] = 3
+[2,0] = 2
+[2,1] = 3
+[2,2] = 4
+
 * [for more details of each functions](https://ybrians.cafe24.com/matrix/)
