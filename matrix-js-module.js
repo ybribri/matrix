@@ -9,7 +9,7 @@ export class Matrix {
         this.#matrix = Array.from({length: this.row}, () => Array.from({ length: this.column}, () => null));
     }
 
-    get value () { 
+    get value () {
         return this.#matrix;
     }
 
@@ -38,6 +38,7 @@ export class Matrix {
             return undefined;
         }
         this.#matrix[f][s] = v;
+        return v;
     }
 
     static isMatrix(matrix) {
@@ -60,7 +61,7 @@ export class Matrix {
     }
 
     reverse(dir='colrow') {
-        if (dir.includes('col')) this.#matrix = this.#matrix.map(u => u.map((v,j) => u[u.length-1-j]));
+        if (dir.includes('col')) this.#matrix = this.#matrix.map( u => u.map((v,j) => u[u.length-1-j]));
         if (dir.includes('row')) this.#matrix = this.#matrix.map((u, i)=>this.#matrix[this.#matrix.length-1-i]);
         let newMatrix = new Matrix(this.#matrix.length, this.#matrix[0].length);
         newMatrix.value = this.#matrix;
@@ -84,9 +85,7 @@ export class Matrix {
             });
             this.#matrix = tempArr;
         }
-        let newMatrix = new Matrix(this.#matrix.length, this.#matrix[0].length);
-        newMatrix.value = this.#matrix;
-        return newMatrix;
+        return this;
     }
 
     map(fn, arg) {
@@ -225,13 +224,13 @@ export class Matrix {
     concat() {
         let res = JSON.parse(JSON.stringify(this.#matrix));
         let dir = arguments[arguments.length-1];
-        let min = res[0].length;
-        let cnt = 0;
-        
+        let min, cnt;
+
         switch (dir) {
             case "col":
                 if (arguments.length==1) break;
-
+                min = res[0].length;
+                cnt = 0;
                 res.forEach((row, i)=>{ 
                     if (min>row.length) {
                         min = row.length;
@@ -334,23 +333,42 @@ export class Matrix {
         return this.#matrix[this.#matrix.length-1].length;        
     }
 
-    slice(from=[0,0], to=[this.row-1, this.column]) {
+    slice(from=[0,0], to=[this.row-1, this.column], dir='col') {
         const [si, sj] = this.#reIndex(from);
-        const [ei, ej] = this.#reIndexTo(to);
-        if (si>this.row || si>ei || (ei==si && sj>=ej)) return [];
-        if (ei<0 && ej<0) return [];
+        let [ei, ej] = this.#reIndexTo(to);
         let temp = [];
-        for(let i=0; i<this.row; i++) {
-            let row=this.#matrix[i];
-            if (i<si || i>ei) continue;
-            for(let j=0; j<row.length; j++) {
-                let col = row[j];
-                if (i==si && j<sj) continue;
-                if (i==ei && j>=ej) continue;
-                temp.push(col);
-            }
+        let tempArr = [];
+        switch (dir) {
+            case 'col':
+                if (si>this.row-1 || si>ei || (si==ei && sj>=ej)) return [];
+                if (ei<0 && ej<0) return [];
+                for(let i=0; i<this.row; i++) {
+                    let row=this.#matrix[i];
+                    if (i<si || i>ei) continue;
+                    for(let j=0; j<row.length; j++) {
+                        let col = row[j];
+                        if (i==si && j<sj) continue;
+                        if (i==ei && j>=ej) continue;
+                        temp.push(col);
+                    }
+                }
+                tempArr=this.#organizeMatrix(temp);
+                break;
+            case 'row':
+                [ei, ej] = this.#reIndexRowTo(to);
+                if (sj>this.column-1 || sj>ej || (sj==ej && si>=ei)) return [];
+                if (ej<0 && ei<0) return [];
+                for(let j=0; j<this.column; j++) {
+                    if (j<sj || j>ej) continue;
+                    for (let i=0; i<this.row; i++) {
+                        if (this.#matrix[i]===undefined || (j==ej && i>=ei)) break;
+                        temp.push(this.#matrix[i][j]);
+                    }
+                }
+                tempArr=this.#organizeRowMatrix(temp);
+                break;                
         }
-        let tempArr=this.#organizeMatrix(temp);
+        
         let newMatrix = new Matrix(tempArr.length, tempArr[0].length);
         newMatrix.value = tempArr;
         return newMatrix;
@@ -502,7 +520,7 @@ export class Matrix {
         let fTarget = this.row==1 ? target[1] : target[0] * this.column + target[1];
         let fStart = this.row==1 ? start[1] : start[0] * this.column + start[1];
         let fEnd = this.row==1 ? end[1] : end[0] * this.column + end[1];
-        let temp = this.#matrix.flat(3).copyWithin(fTarget, fStart, fEnd);
+        let temp = this.#matrix.flat().copyWithin(fTarget, fStart, fEnd);
         let tempArr= [];
         if (temp.length>0) { 
             let r = [];
@@ -516,6 +534,245 @@ export class Matrix {
         }
         this.#matrix = tempArr;
         return this;
+    }
+
+    transpose() {
+        if (this.row==1 && this.column==0) return undefined;
+        let firstRowLen = this.#matrix[0].length;
+        if (!this.#matrix.every(row => row.length === firstRowLen)) {
+            console.warn('error : this matrix is not appropriate to be transposed.');
+            return undefined;
+        }
+        let newMatrix = new Matrix(this.column, this.row);
+        for (let i=0; i<this.row; i++) {
+            for(let j=0;j<this.#matrix[i].length; j++) {
+                newMatrix.setValueOf([j, i], this.#matrix[i][j]);
+            }
+        }
+        return newMatrix;
+    }
+
+    det() {
+        if (this.row==1 && this.column==0) return undefined;
+        const isItEven = this.#matrix.every(row => row.length===this.column);
+        if (!isItEven || (this.column !== this.row)) {
+            console.warn('error : a matrix should be a square to have a determinant.');
+            return undefined;
+        }
+        return this.#getDet(this);
+    }
+
+    cofactors() {
+        if (this.row==1 && this.column==0) return undefined;
+        const isItEven = this.#matrix.every(row => row.length===this.column);
+        if (!isItEven || (this.column !== this.row)) {
+            console.warn('error : a matrix should be a square to have matrix of cofactors.');
+            return undefined;
+        }
+        let resultMatrix = new Matrix(this.row, this.column);
+        if (this.row==1) {
+            resultMatrix.value =[[1]];
+            return resultMatrix;
+        }
+        if (this.row==2) {
+            resultMatrix.value =[[this.getValueOf([1,1]), -this.getValueOf([1,0])], [-this.getValueOf([0,1]), this.getValueOf([0,0])]];
+            return resultMatrix;
+        }
+        for (let i=0; i<this.row; i++) {
+            for (let j=0; j<this.row; j++) {
+                let tempMatrix = new Matrix(this.row, this.column);
+                tempMatrix.value = JSON.parse(JSON.stringify(this.#matrix));
+                for (let k=0; k<this.row; k++) {
+                    tempMatrix.setValueOf([i, k], 'toBeRemoved');
+                    tempMatrix.setValueOf([k, j], 'toBeRemoved');
+                }
+                let arr= tempMatrix.filter(el=> el!=='toBeRemoved').value;
+                arr = arr.flat();
+                let tempArr= [];
+                let r = []; 
+                tempMatrix.row--;
+                tempMatrix.column--;
+                arr.forEach((u, i)=>{
+                    r.push(u);
+                    if ((i+1)%(tempMatrix.column)==0 || i==arr.length-1) {
+                        tempArr.push(r);
+                        r=[];
+                    }
+                });
+                tempMatrix.value = JSON.parse(JSON.stringify(tempArr));
+                resultMatrix.setValueOf([i,j],this.#getDet(tempMatrix)*Math.pow(-1, (i+j+2)));
+            }
+        }
+        return resultMatrix;
+    }
+
+    adjoint() {
+        if (this.row==1 && this.column==0) return undefined;
+        const isItEven = this.#matrix.every(row => row.length===this.column);
+        if (!isItEven || (this.column !== this.row)) {
+            console.warn('error : a matrix should be a square to have adjoint matrix.');
+            return undefined;
+        }
+        let cofactors = this.cofactors();
+        let resultMatrix = cofactors.transpose();
+        return resultMatrix;
+    }
+
+    inverse() {
+        if (this.row==1 && this.column==0) return undefined;
+        const isItEven = this.#matrix.every(row => row.length===this.column);
+        if (!isItEven || (this.column !== this.row)) {
+            console.warn('error : this matrix is not invertible. should be a square.');
+            return undefined;
+        }
+        if (this.det()===0) {
+            console.warn('error : this matrix is not invertible.');
+            return undefined;
+        }
+        
+        let div = this.det();
+        let adjMatrix = this.adjoint();
+        return adjMatrix.map(el => el/div);
+    }
+
+    add(matrix) {
+        if (this.row==1 && this.column==0) return undefined;
+        if (!Matrix.isMatrix(matrix)) {
+            console.warn(`error: argument is not a matrix.`);
+            return undefined
+        }
+        const isAddible = matrix.every((el,[a,b])=> this.getValueOf([a,b])!==undefined );
+        if (!isAddible || !(this.row===matrix.row && this.column===matrix.column)) {
+            console.warn(`error: the size of the matrix is not matched.`);
+            return undefined;
+        }
+        let resultMatrix = new Matrix(this.row, this.column);
+        resultMatrix = matrix.map((el, [a,b]) => el+this.getValueOf([a,b]));
+        return resultMatrix;
+    }
+    
+    subtract(matrix) {
+        if (this.row==1 && this.column==0) return undefined;
+        if (!Matrix.isMatrix(matrix)) {
+            console.warn(`error: argument is not a matrix.`);
+            return undefined
+        }
+        const isAddible = matrix.every((el,[a,b])=> this.getValueOf([a,b])!==undefined );
+        if (!isAddible || !(this.row===matrix.row && this.column===matrix.column)) {
+            console.warn(`error: the size of the matrix is not matched.`);
+            return undefined;
+        }
+        let resultMatrix = new Matrix(this.row, this.column);
+        resultMatrix = matrix.map((el, [a,b]) => this.getValueOf([a,b])-el);
+        return resultMatrix;
+    }
+
+    multiply(matrix) {
+        if (this.row==1 && this.column==0) return undefined;
+        if (!Matrix.isMatrix(matrix) && typeof matrix !=='number') {
+            console.warn(`error: argument has to be a matrix or a number.`);
+            return undefined
+        }
+        // if number, just multiply to all elements
+        if (typeof matrix==='number') return this.map(el => el*matrix);
+        // if matrix, keep going
+        let firstRowLen = this.column;
+        if (!this.#matrix.every(row => row.length === firstRowLen)) {
+            console.warn('error : existing matrix is not appropriate to be multiplied. not even column sizes.');
+            return undefined;
+        }
+        firstRowLen = matrix.column;
+        if (!matrix.value.every(row => row.length === firstRowLen)) {
+            console.warn('error : multiplying matrix is not appropriate. not even column sizes.');
+            return undefined;
+        }
+        if (this.column!==matrix.row) {
+            console.warn('error : column size of existing matrix has to be the same with row size of applying matrix.');
+            return undefined;
+        }
+        let resultMatrix = new Matrix(this.row, matrix.column);
+        for(let i=0; i<matrix.column; i++) {
+            for (let j=0; j<this.row; j++) {
+                let cSum = 0;
+                for (let k=0; k<this.column; k++) {
+                    cSum += this.getValueOf([j, k])*matrix.getValueOf([k, i]);
+                }
+                resultMatrix.setValueOf([j, i], cSum);
+            }
+        }
+        return resultMatrix;
+    }
+
+    divide(matrix) {
+        if (this.row==1 && this.column==0) return undefined;
+        if (!Matrix.isMatrix(matrix) && typeof matrix !=='number') {
+            console.warn(`error: argument has to be a matrix or a number.`);
+            return undefined;
+        }
+        // if number, just multiply to all elements
+        if (typeof matrix==='number') {
+            if (matrix===0) {
+                console.warn(`error: cannot divide by 0.`);
+                return undefined;
+            }
+            return this.map(el => el/matrix);
+        }
+        // if matrix, keep going
+        let firstRowLen = this.column;
+        if (!this.#matrix.every(row => row.length === firstRowLen)) {
+            console.warn('error : existing matrix is not appropriate to be divided. not even column sizes.');
+            return undefined;
+        }
+        firstRowLen = matrix.column;
+        if (!matrix.value.every(row => row.length === firstRowLen)) {
+            console.warn('error : multiplying matrix is not appropriate. not even column sizes.');
+            return undefined;
+        }
+        if (this.column!==matrix.row) {
+            console.warn('error : column size of existing matrix has to be the same with row size of applying matrix.');
+            return undefined;
+        }
+        if (matrix.row!==matrix.column) {
+            console.warn('error : a divisor matrix should be a square.');
+            return undefined;
+        }
+        if (matrix.det()===0) {
+            console.warn('error : the determinant of a divisor matrix should not be 0.');
+            return undefined;
+        }
+        let divisor = matrix.inverse();
+        let resultMatrix = this.multiply(divisor);
+        return resultMatrix;
+    }
+
+    #getDet(matrix) {
+        if (matrix.column === 1) return (matrix.getValueOf([0,0]));
+        if (matrix.column === 2) return (matrix.getValueOf([0,0])*matrix.getValueOf([1,1])-matrix.getValueOf([0,1])*matrix.getValueOf([1,0]));
+        let sum = 0;
+        let tempMatrix = new Matrix(matrix.row,matrix.column);
+        for (let i=0; i<matrix.column; i++) {
+            tempMatrix.value = JSON.parse(JSON.stringify(matrix.value));
+            for(let j=0; j<tempMatrix.column; j++) {
+                tempMatrix.setValueOf([0, j], 'toBeRemoved');
+                tempMatrix.setValueOf([j, i], 'toBeRemoved');
+            }
+            let arr= tempMatrix.filter(el=> el!=='toBeRemoved').value;
+            arr = arr.flat();
+            let tempArr= [];
+            let r = [];
+            tempMatrix.row--;
+            tempMatrix.column--;
+            arr.forEach((u, i)=>{
+                r.push(u);
+                if ((i+1)%(tempMatrix.column)==0 || i==arr.length-1) {
+                    tempArr.push(r);
+                    r=[];
+                }
+            });
+            tempMatrix.value = JSON.parse(JSON.stringify(tempArr));
+            sum += matrix.getValueOf([0, i]) * this.#getDet(tempMatrix) * Math.pow(-1, i);
+        }
+        return sum;
     }
 
     #reIndexAt(at) {
@@ -567,6 +824,20 @@ export class Matrix {
         return [f, s];               
     }
 
+    #reIndexRowTo(to) {
+        let [f, s] = to;
+        if (f<0) f = this.row+f;
+        f = (f>this.row ? this.row : f);
+        if (s<0) s = this.column+s;
+        s = (s>this.column-1 ? this.column-1 : s);
+        if (s==0 && f<1) s=-1;
+        if (s>0 && f<=0) {
+            s--;
+            f=this.#matrix.length;
+        }
+        return [f, s];               
+    }    
+
     #organizeMatrix(arr) {
         arr = arr.flat();
         let tempArr= [];
@@ -579,5 +850,20 @@ export class Matrix {
             }
         });
         return tempArr;
-    }    
+    }
+    
+    #organizeRowMatrix(arr) {
+        arr = arr.flat();
+        let tempArr= [];
+        let cnt = 0;
+        for (let j=0; j<Math.ceil(arr.length/this.row); j++) {
+            for (let i=0; i<this.row; i++) {
+                if (cnt>arr.length-1) break;
+                if (j==0) tempArr[i]=[];
+                tempArr[i][j]=arr[cnt];
+                cnt++;
+            }
+        }
+        return tempArr;
+    }  
 }

@@ -4,3 +4,4 @@ matrix-js-node.js
 matrix-js-node.min.js
 test.js
 /node_modules
+/dev

@@ -1,7 +1,8 @@
 # only for git
-matirx-js-link.js
+matrix-js-link.js
 matrix-js-link.min.js
 matrix-js-module.js
 matrix-js-module.min.js
 test.js
 /node_modules
+/dev
